@@ -1,0 +1,16 @@
+didiwiki for Debian
+-------------------
+
+By default a single central copy of didiwiki is started. If instead
+you'd prefer to have individual users run their own copies of
+didiwiki, comment out ENABLE_DAEMON=yes in /etc/default/didiwiki. This
+may be preferable on a multiuser system.
+
+If using a single central copy of didiwiki, the appearance of the wiki
+pages can be altered by editing the stylesheet
+/etc/didiwiki/styles.css.
+
+When run, didiwiki will listen on localhost:8000 by default. Connect
+to it by pointing your web browser at http://localhost:8000.
+
+ -- Hanna Wallach <hmw26@cam.ac.uk> Wed, 12 Jan 2005 23:13:30 -0500

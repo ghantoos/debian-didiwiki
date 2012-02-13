@@ -1,0 +1,90 @@
+didiwiki (0.5-7) unstable; urgency=low
+
+  * QA upload.
+  * Added the '-R' option to dh_installinit in order to restart the didiwiki 
+    service after an upgrade. And removed overlapping functions from the 
+    didiwiki.postinst file to prevent the service from being started twice. 
+    (Closes: #533862)
+  * Standards-Version bumped to 3.8.2.
+  * Added a patch to fix some spelling errors reported by lintian.
+  * Service would not start if default home (/var/lib/didiwiki) did not exist. 
+    Added var/lib/didiwiki in the didiwiki.dirs file to fix this issue.
+  * Corrected ownership of /var/lib/didiwiki to didiwiki:didiwiki
+  * Added a commented watch file, and removed the lintian override
+    (debian-watch-file-is-missing)
+
+ -- Ignace Mouzannar <mouzannar@gmail.com>  Sun, 21 Jun 2009 19:52:12 +0200
+
+didiwiki (0.5-6) unstable; urgency=low
+
+  * QA upload.
+  * Maintainer changed to QA Group.
+  * Add Build-depends on dpatch and patchutils.
+  * Rewrited didiwiki.postinst to use invoke-rc.d to comply with
+    the version 3.7.0 of the Policy.
+  * Standards-Version bumped to 3.8.1.
+  * Since the src/ directory had modified files without using patches, I
+    replaced these modified-files with the original ones and added a patch 
+    to re-introduce these changes to keep the compatibility backwards.
+    This patch can be found in debian/patches/10_modified_code.dpatch.
+  * Removed the non-existant '-m 644' option of dh_install from
+    debian/rules. (Closes: #518861)
+  * Added a patch to fix the mangling on (unicode) wiki pages' names.
+    Patch provided by Alexey Khudyakov <alexey.skladnoy@gmail.com>
+    (Closes: #420696)
+  * Added a patch to remove the double newline on preformatted text.
+    Patch provided by Neil Stockbridge <neil@dist.ro> (Closes: #376457)
+  * Added Lintian override and removed the watch file since upstream URL is
+    not working anymore. (Closes: #449902)
+  * Added a note on the copyright file regarding the "dead" upstream's URL.
+    (Closes: #477049)
+
+ -- Mauro Lizaur <mauro@cacavoladora.org>  Mon, 01 Jun 2009 00:11:31 -0300
+
+didiwiki (0.5-5.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Added LSB formatted dependency info in init.d script (closes: #468458)
+  * Fixed bashism in postrm (closes: #472227)
+
+ -- Peter Eisentraut <petere@debian.org>  Wed, 02 Apr 2008 00:54:30 +0200
+
+didiwiki (0.5-5) unstable; urgency=low
+
+  * debian/didiwiki.postrm: Remove /var/lib/didiwiki/styles.css if it
+    is still a symlink to /etc/didiwiki/styles.css when the package is
+    purged. Closes #340121.
+  * Remove old FSF address from debian/copyright. Fixes
+    old-fsf-address-in-copyright-file Lintian warning.
+
+ -- Hanna Wallach <hmw26@cam.ac.uk>  Fri, 24 Mar 2006 19:48:15 -0500
+
+didiwiki (0.5-4) unstable; urgency=low
+
+  * Add adduser to Depends. Fixes 
+    maintainer-script-needs-depends-on-adduser Lintian warning.
+  * src/didi.c: Make didiwiki's port configurable.
+  * Change Standards-Version to 3.6.2. Fixes out-of-date-standards-version
+    Lintian warning.
+
+ -- Hanna Wallach <hmw26@cam.ac.uk>  Sun, 28 Aug 2005 12:39:37 -0400
+
+didiwiki (0.5-3) unstable; urgency=low
+
+  * src/wiki.c: Use user-defined data as parameters to fixed format 
+    string rather than as the format string itself (closes #302273).
+
+ -- Hanna Wallach <hmw26@cam.ac.uk>  Wed, 30 Mar 2005 21:41:49 -0500
+
+didiwiki (0.5-2) unstable; urgency=low
+
+  * Use dh_install rather than install to install styles.css.
+
+ -- Hanna Wallach <hmw26@cam.ac.uk>  Wed,  2 Feb 2005 00:44:19 +0000
+
+didiwiki (0.5-1) unstable; urgency=low
+
+  * Initial Release (closes #289973).
+
+ -- Hanna Wallach <hmw26@cam.ac.uk>  Wed, 12 Jan 2005 23:13:30 -0500
+

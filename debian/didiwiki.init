@@ -1,0 +1,78 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          didiwiki
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: start, restart and stop Didiwiki's daemon
+### END INIT INFO
+
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+DAEMON=/usr/bin/didiwiki
+NAME=didiwiki
+DESC=didiwiki
+
+test -x $DAEMON || exit 0
+
+# Include didiwiki defaults if available
+if [ -f /etc/default/didiwiki ] ; then
+	. /etc/default/didiwiki
+fi
+
+set -e
+
+check_enable_daemon_option() {
+    if [ ! "$ENABLE_DAEMON" = "yes" ]; then
+	echo "Not starting didiwiki, disabled via /etc/default/didiwiki"
+	return 1
+    else
+	return 0
+    fi
+}
+
+case "$1" in
+  start)
+  if check_enable_daemon_option; then
+	echo -n "Starting $DESC: "
+	start-stop-daemon --start -b -m -c didiwiki --quiet --pidfile \
+	    /var/run/$NAME.pid --exec $DAEMON -- --home=/var/lib/didiwiki
+	echo "$NAME."
+  else
+      RET=1
+  fi
+	;;
+  stop)
+	echo -n "Stopping $DESC: "
+	start-stop-daemon --stop --quiet -m -o --pidfile /var/run/$NAME.pid \
+		--exec $DAEMON
+	echo "$NAME."
+	;;
+  restart|force-reload)
+	#
+	#	If the "reload" option is implemented, move the "force-reload"
+	#	option to the "reload" entry above. If not, "force-reload" is
+	#	just the same as "restart".
+	#
+	echo -n "Restarting $DESC: "
+	start-stop-daemon --stop -m -o --quiet --pidfile \
+		/var/run/$NAME.pid --exec $DAEMON
+	sleep 1
+	if check_enable_daemon_option; then
+	    start-stop-daemon --start -b -m -c didiwiki --quiet --pidfile \
+		/var/run/$NAME.pid --exec $DAEMON -- \
+		--home=/var/lib/didiwiki
+	    echo "$NAME."
+	else
+	    RET=1
+	fi
+	;;
+  *)
+	N=/etc/init.d/$NAME
+	# echo "Usage: $N {start|stop|restart|reload|force-reload}" >&2
+	echo "Usage: $N {start|stop|restart|force-reload}" >&2
+	exit 1
+	;;
+esac
+
+exit 0

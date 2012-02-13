@@ -1,0 +1,31 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 40_spelling.dpatch by Ignace Mouzannar <mouzannar@gmail.com>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Corrects spelling errors (seperated -> separated)
+
+@DPATCH@
+diff -urNad didiwiki-0.5~/README didiwiki-0.5/README
+--- didiwiki-0.5~/README	2009-06-23 14:33:04.000000000 +0200
++++ didiwiki-0.5/README	2009-06-29 01:38:09.000000000 +0200
+@@ -45,7 +45,7 @@
+ 
+ http://didiwiki/api/pages
+ 
+- Returns a seperated list ( one entry per line containing page
++ Returns a separated list ( one entry per line containing page
+  title,TAB,modified date) of wiki pages with the most recently modified
+  first.
+ 
+diff -urNad didiwiki-0.5~/src/wikitext.h didiwiki-0.5/src/wikitext.h
+--- didiwiki-0.5~/src/wikitext.h	2009-06-29 01:38:08.000000000 +0200
++++ didiwiki-0.5/src/wikitext.h	2009-06-29 01:38:09.000000000 +0200
+@@ -108,7 +108,7 @@
+ " ---- Horizonal line\n"                                                 \
+ "----\n"                                                                 \
+ "\n"                                                                     \
+-"Paragraphs are seperated by an empty line\n"                            \
++"Paragraphs are separated by an empty line\n"                            \
+ "\n"                                                                     \
+ "Like this. Another paragraph.\n"                                        \
+ "\n"                                                                     \

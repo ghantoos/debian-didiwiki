@@ -1,0 +1,17 @@
+Source: didiwiki
+Section: web
+Priority: optional
+Maintainer: Debian QA Group <packages@qa.debian.org>
+Build-Depends: debhelper (>= 7), cdbs, dpatch
+Standards-Version: 3.8.2
+
+Package: didiwiki
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, adduser
+Description: simple wiki implementation with built-in webserver
+ DidiWiki is aimed at those who need a quick and lightweight wiki for
+ personal use, such as notes, "to do" lists, etc. It is written in C,
+ and has very low system requirements (binary size of ~25k
+ stripped). This makes it particularly useful for handhelds. DidiWiki
+ does not require installation of a separate webserver, scripting
+ language, or database.

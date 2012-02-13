@@ -1,0 +1,238 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 10_modified_code.dpatch by Mauro Lizaur <mauro@cacavoladora.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Modifies the modified code. (?)
+## DP: The src/ dir had modified files directly instead of using patches,
+## DP: so this (mega-)patch modifies the original (pristine) code
+## DP: to keep these modifications made before.
+
+@DPATCH@
+
+diff -Naur src-orig/didi.c src/didi.c
+--- didiwiki-0.5/src-orig/didi.c	2004-07-29 10:33:47.000000000 -0300
++++ didiwiki-0.5/src/didi.c	2009-06-01 15:47:47.000000000 -0300
+@@ -1,5 +1,7 @@
+ #include "didi.h"
+ 
++static int debug;
++
+ void 
+ usage(char *progname)
+ {
+@@ -11,13 +13,61 @@
+ {
+   HttpRequest  *req  = NULL;
+   int           port = 8000;
++  int           c;
++  char          *didiwiki_home = NULL;
+ 
+-  wiki_init();
++  debug = 0;
+ 
+-  if(argc > 1 && !strcmp(argv[1],"debug"))
+-    req = http_request_new(); 	/* reads request from stdin */
+-  else
++  while (1)
++    {
++      static struct option long_options[] = 
++	{
++	  {"debug", no_argument,       0, 'd'},
++	  {"port",  required_argument, 0, 'p'},
++	  {"home",  required_argument, 0, 'h'},
++	  {0, 0, 0, 0}
++	};
++
++      /* getopt_long stores the option index here */
++      int option_index = 0;
++      
++      c = getopt_long (argc, argv, "dp:h:", long_options, &option_index);
++
++      /* detect the end of the options */
++      if (c == -1)
++	break;
++
++      switch (c)
++	{
++	case 0:
++	  break;
++	  
++	case 'd':
++	  debug = 1;
++	  break;
++	  
++	case 'p':
++	  port = atoi(optarg);
++	  break;
++	  
++	case 'h':
++	  didiwiki_home = optarg;
++	  break;
++
++	default:
++	  abort ();
++	}
++    }
++
++  wiki_init(didiwiki_home);
++
++  if (debug)
++    {
++      req = http_request_new(); 	/* reads request from stdin */
++    }
++  else {
+     req = http_server(port);    /* forks here */
++  }
+ 
+   wiki_handle_http_request(req);
+ 
+diff -Naur didiwiki-0.5/src-orig/didi.h didiwiki-0.5/src/didi.h
+--- didiwiki-0.5/src-orig/didi.h	2004-09-17 07:07:12.000000000 -0300
++++ didiwiki-0.5/src/didi.h	2009-06-01 15:47:47.000000000 -0300
+@@ -75,6 +75,7 @@
+ #include <ctype.h>
+ #include <sys/stat.h>
+ #include <dirent.h>
++#include <getopt.h>
+ 
+ #endif
+ 
+diff -Naur didiwiki-0.5/src-orig/http.c didiwiki-0.5/src/http.c
+--- didiwiki-0.5/src-orig/http.c	2004-09-17 06:10:00.000000000 -0300
++++ didiwiki-0.5/src/http.c	2009-06-01 15:47:47.000000000 -0300
+@@ -454,7 +454,6 @@
+   struct timeval     delay;         /* How long to wait inside select() */
+   struct sockaddr_in inaddr;        /* The socket address */
+   int                reuse = 1;
+-  int                n = 0;
+ 
+   memset(&inaddr, 0, sizeof(inaddr));
+   inaddr.sin_family = AF_INET;
+@@ -474,33 +473,24 @@
+   setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)); 
+ #endif
+ 
+-  while (n < 10)
++  fprintf(stderr,"Attempting to use port %d .. ", iPort);
++  
++  inaddr.sin_port = htons(iPort);
++  
++  if( bind(listener, (struct sockaddr*)&inaddr, sizeof(inaddr)) < 0 )
+     {
+-      fprintf(stderr,"Attempting to use port %d .. ", iPort+n);
+-
+-      inaddr.sin_port = htons(iPort + n);
+-
+-      if( bind(listener, (struct sockaddr*)&inaddr, sizeof(inaddr)) < 0 )
+-	{
+-	  fprintf(stderr,"Failed! \n");
+-	  n++;
+-	  continue;
+-	}
++      fprintf(stderr,"Failed! \n");
+ 
+-      fprintf(stderr,"Success! \n");
+-      break;
+-    }
+-
+-  if (n == 10)
+-    {
+-      fprintf(stderr,"Can't bind to any ports, giving up.\n");
++      fprintf(stderr,"Can't bind to port. You can specify an alternative port using the -p option.\n");
+       exit(1);
+     }
+-
+-  fprintf(stderr,"DidiWiki Started. Please point your browser at http://localhost:%i\n", iPort+n);
+-
++  
++  fprintf(stderr,"Success! \n");
++  
++  fprintf(stderr,"DidiWiki Started. Please point your browser at http://localhost:%i\n", iPort);
++  
+   listen(listener,10);
+-
++  
+   while( 1 )
+     {
+       if( nchildren>MAX_PARALLEL )
+diff -Naur didiwiki-0.5/src-orig/wiki.c didiwiki-0.5/src/wiki.c
+--- didiwiki-0.5/src-orig/wiki.c	2004-09-30 12:15:00.000000000 -0300
++++ didiwiki-0.5/src/wiki.c	2009-06-01 15:48:16.000000000 -0300
+@@ -1032,26 +1032,33 @@
+ }
+ 
+ int
+-wiki_init(void)
++wiki_init(char *didiwiki_home)
+ {
+   char datadir[512] = { 0 };
+-  struct stat st;
++  struct stat st;  
+ 
+-  if (getenv("DIDIWIKIHOME"))
++  if (didiwiki_home)
+     {
+-      snprintf(datadir, 512, getenv("DIDIWIKIHOME"));
++      snprintf(datadir, 512, "%s", didiwiki_home);
+     }
+-  else
++  else 
+     {
+-      if (getenv("HOME") == NULL)
++      if (getenv("DIDIWIKIHOME"))
+ 	{
+-	  fprintf(stderr, "Unable to get home directory, is HOME set?\n");
+-	  exit(1);
++	  snprintf(datadir, 512, "%s", getenv("DIDIWIKIHOME"));
+ 	}
+-
+-      snprintf(datadir, 512, "%s/.didiwiki", getenv("HOME"));
+-    }  
+-     
++      else
++	{
++	  if (getenv("HOME") == NULL)
++	    {
++	      fprintf(stderr, "Unable to get home directory, is HOME set?\n");
++	      exit(1);
++	    }
++	  
++	  snprintf(datadir, 512, "%s/.didiwiki", getenv("HOME"));
++	}
++    }
++  
+   /* Check if ~/.didiwiki exists and create if not */
+   if (stat(datadir, &st) != 0 )
+     {
+diff -Naur didiwiki-0.5/src-orig/wiki.h didiwiki-0.5/src/wiki.h
+--- didiwiki-0.5/src-orig/wiki.h	2004-09-22 19:05:17.000000000 -0300
++++ didiwiki-0.5/src/wiki.h	2009-06-01 15:47:47.000000000 -0300
+@@ -22,7 +22,7 @@
+ wiki_print_data_as_html(HttpResponse *res, char *raw_page_data);
+ 
+ int
+-wiki_init(void);
++wiki_init(char *didiwiki_home);
+ 
+ 
+ #endif
+diff -Naur didiwiki-0.5/src-orig/wikitext.h didiwiki-0.5/src/wikitext.h
+--- didiwiki-0.5/src-orig/wikitext.h	2004-09-10 14:06:30.000000000 -0300
++++ didiwiki-0.5/src/wikitext.h	2009-06-01 15:47:47.000000000 -0300
+@@ -70,13 +70,13 @@
+                                                                          \
+ "==Welcome to !DidiWiki\n"                                               \
+ "/!DidiWiki / is a small and simple [http://en.wikipedia.org/wiki/Wiki WikiWikiWeb]\n" \
+-"Implementaion. Its intended for personal note taking, Todo lists and any other uses you can think of.\n"                               \
++"implementation. It's intended for personal note-taking, \"to do\" lists, and any other uses you can think of.\n"                               \
+ "\n"                                                                        \
+ "To learn more about what a [http://www.c2.com/cgi/wiki?WikiWikiWeb WikiWikiWeb] is, read about [http://www.c2.com/cgi/wiki?WhyWikiWorks WhyWikiWorks] and the [http://www.c2.com/cgi/wiki?WikiNature WikiNature]. Also, consult the [http://www.c2.com/cgi/wiki?WikiWikiWebFaq WikiWikiWebFaq].\n"                      \
+ "\n"                                                                        \
+-"For an example how a !WikiWiki entry looks in text form you can [?edit edit] this page. Also see WikiHelp for infomation on usage and formatting rules. Use The WikiSandbox to experiment.\n" \
++"For an example of how a !DidiWiki entry looks in text form you can [?edit edit] this page. Also see WikiHelp for infomation on usage and formatting rules. Use The WikiSandbox to experiment.\n" \
+ "\n"                                                                        \
+-"/!DidiWiki / is written by [mailto://mallum@o-hand.com Matthew Allum] in C and is free software, released under the [http://www.gnu.org GNU] [http://www.gnu.org/copyleft/gpl.html GPL]. It uses a formatting style similar to that of [http://www.kwiki.org kwiki] and some webserver code from [http://www.cvstrac.org cvstrac]\n"
++"/!DidiWiki / is written by [mailto://mallum@o-hand.com Matthew Allum] in C and is free software, released under the [http://www.gnu.org GNU] [http://www.gnu.org/copyleft/gpl.html GPL]. It uses a formatting style similar to that of [http://www.kwiki.org kwiki] and some webserver code from [http://www.cvstrac.org cvstrac].\n"
+ 
+ 
+ #define HELPTEXT ""                                                      \

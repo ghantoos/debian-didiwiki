@@ -1,0 +1,103 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 10_redirect.dpatch by Alexey Khudyakov <alexey.skladnoy@gmail.com>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Fixes unicode chars on page names
+
+@DPATCH@
+
+diff -Naur didiwiki-0.5-deb/src/util.c didiwiki-0.5-patch/src/util.c
+--- didiwiki-0.5-deb/src/util.c	2007-04-21 15:56:13.000000000 +0400
++++ didiwiki-0.5-patch/src/util.c	2007-04-21 15:57:27.000000000 +0400
+@@ -189,3 +189,47 @@
+   out[i] = 0;
+   return out;
+ }
++
++
++int validURIchar(char c)
++{
++    return 
++        (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
++        c == '.' || c == '-' || c == '_' || c == '~' || c == '?';
++    /* question mark isn't allowed character, but I'm not going
++       to encode it */
++}
++
++/*
++ * Encodes character which aren't allowed in URIs
++ * like %D0
++ */
++char urienc[16] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
++char * util_httpize(const char* url)
++{
++    /* Find length of result string */
++    int i;
++    int len = 0;
++    for(i = 0; url[i]; ++i) {
++        if( validURIchar(url[i]) )
++            len++;
++        else 
++            len += 3;
++    }
++    char * out = malloc(sizeof(char)*(len + 1));
++    if( out == 0 ) return 0;
++    
++    out[len]=0;
++    int j = 0;
++    for( i = 0; url[i]; ++i ) {
++        if( validURIchar(url[i]) )
++            out[j++] = url[i];
++        else {
++            out[j++] = '%';
++            out[j++] = urienc[ (url[i]&0xF0) >> 4 ];
++            out[j++] = urienc[ url[i]&0x0F ];
++        }
++    }
++    return out;
++}
++
+diff -Naur didiwiki-0.5-deb/src/util.h didiwiki-0.5-patch/src/util.h
+--- didiwiki-0.5-deb/src/util.h	2007-04-21 15:56:13.000000000 +0400
++++ didiwiki-0.5-patch/src/util.h	2007-04-21 15:57:27.000000000 +0400
+@@ -16,5 +16,6 @@
+ char *
+ util_htmlize(const char *in, int n);
+ 
+-
++char * 
++util_httpize(const char* url);
+ #endif
+diff -Naur didiwiki-0.5-deb/src/wiki.c didiwiki-0.5-patch/src/wiki.c
+--- didiwiki-0.5-deb/src/wiki.c	2007-04-21 15:56:13.000000000 +0400
++++ didiwiki-0.5-patch/src/wiki.c	2007-04-21 15:57:27.000000000 +0400
+@@ -555,14 +555,17 @@
+ 
+ }
+ 
+-int 
++int
+ wiki_redirect(HttpResponse *res, char *location)
+ {
+-  int   header_len = strlen(location) + 14; 
++  char *location_enc = util_httpize(location);
++  
++  int   header_len = strlen(location_enc) + 14; 
+   char *header = alloca(sizeof(char)*header_len);
+ 
+-  snprintf(header, header_len, "Location: %s\r\n", location);
+-
++  snprintf(header, header_len, "Location: %s\r\n", location_enc);
++  free(location_enc);
++  
+   http_response_append_header(res, header);
+   http_response_printf(res, "<html>\n<p>Redirect to %s</p>\n</html>\n", 
+ 		       location);
+@@ -573,6 +576,7 @@
+ }
+ 
+ 
++
+ void
+ wiki_show_page(HttpResponse *res, char *wikitext, char *page)
+ {

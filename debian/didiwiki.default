@@ -1,0 +1,11 @@
+# Defaults for didiwiki initscript
+# sourced by /etc/init.d/didiwiki
+# installed at /etc/default/didiwiki by the maintainer scripts
+
+#
+# This is a POSIX shell fragment
+#
+
+# run central copy of didiwiki?
+ENABLE_DAEMON=yes
+

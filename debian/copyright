@@ -1,0 +1,28 @@
+This package was debianised by Hanna Wallach <hmw26@cam.ac.uk> on Wed,
+12 Jan 2005 23:13:30 -0500.
+
+It was downloaded from http://didiwiki.org/
+
+Note: The upstream URL is not availabe anymore, now it's a spam-site.
+This software can be downloaded from: 
+     http://svn.o-hand.com/repos/didiwiki/trunk/
+
+Upstream Authors: Matthew Allum <mallum@o-hand.com>
+                  Carsten Graeser <c.g.berlin@web.de>
+
+Copyright:
+
+  Copyright (C) 2004 Matthew Allum <mallum@o-hand.com>
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  General Public License for more details.
+
+On Debian GNU/Linux systems, the complete text of the GNU General
+Public License can be found in '/usr/share/common-licenses/GPL-2'.

@@ -1,0 +1,19 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 20_preformatted.dpatch by Neil Stockbridge <neil@dist.ro>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Removes the double newlines in preformatted text
+
+@DPATCH@
+
+--- didiwiki-orig/didiwiki-0.5/src/wiki.c	2009-06-01 16:16:50.000000000 -0300
++++ didiwiki-0.5/src/wiki.c	2009-06-01 15:48:16.000000000 -0300
+@@ -249,7 +249,7 @@
+       if (pre_on && !isspace(*line) && *line != '\0')
+ 	{
+ 	  /* close any preformatting if already on*/
+-	  http_response_printf(res, "\n</pre>\n") ;
++	  http_response_printf(res, "</pre>\n") ;
+ 	  pre_on = 0;
+ 	}
+ 
