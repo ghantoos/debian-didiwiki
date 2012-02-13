@@ -1,3 +1,20 @@
+didiwiki (0.5-9) unstable; urgency=low
+
+  * Added debian/README.source pointing to the dpatch documentation.
+  * Added debian/patches/90_search_engine.dpatch:
+    - Makes search case insensitive.
+    - Removes redirection to page when the search terms are identical to 
+      a page name.
+    - Adds a new behaviour: if the search returns only one page, then it 
+      redirects the user there.
+    Patch based on initial work provided by Carlo Mandelli <camandel@gmail.com>
+    (Closes: #536484)
+  * Modified debian/patches/40_spelling.dpatch:
+    - Corrects a minor typo in src/wiki.c
+  * Standards-Version bumped to 3.8.3.
+
+ -- Ignace Mouzannar <mouzannar@gmail.com>  Tue, 06 Oct 2009 21:08:17 +0200
+
 didiwiki (0.5-8) unstable; urgency=low
 
   * New maintainer (Closes: #531177)
@@ -6,7 +23,7 @@ didiwiki (0.5-8) unstable; urgency=low
   * Added the possibility to bind to an IP address other than the default
     "0.0.0.0" using the -l or --listen flags.
     Patch based on initial work provided by Carlo Mandelli <camandel@gmail.com>
-   (Closes: #536787)
+    (Closes: #536787)
   * Completed the usage() function to print a user friendly help message
   * Added the --help flag that displays the usage() message
   * Added SIGINT and SIGTERM handlers in order to stop didiwiki cleanly and

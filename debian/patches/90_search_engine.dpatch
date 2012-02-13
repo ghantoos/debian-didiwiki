@@ -1,0 +1,41 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 90_search_engine.dpatch by Carlo Mandelli <camandel@gmail.com> and
+## Ignace Mouzannar <mouzannar@gmail.com>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: - Make search case insensitive
+## DP: - Removes redirection to page when search terms are identical to 
+## DP;   a page name
+## DP: - If the search returns only one page, then it redirects the user there
+## DP: - This patch closes #536484
+
+@DPATCH@
+diff -urNad didiwiki-0.5~/src/wiki.c didiwiki-0.5/src/wiki.c
+--- didiwiki-0.5~/src/wiki.c	2009-10-06 22:47:59.000000000 +0200
++++ didiwiki-0.5/src/wiki.c	2009-10-06 22:49:07.000000000 +0200
+@@ -662,7 +662,7 @@
+ 	{ 			/* Super Simple Search */
+ 	  char *data = NULL;
+ 	  if ((data = file_read(namelist[n]->d_name)) != NULL)
+-	    if (strstr(data, expr) == NULL)
++	    if (strcasestr(data, expr) == NULL)
+ 	      if (strcmp(namelist[n]->d_name, expr) != 0) 
+ 		goto cleanup; 
+ 	}
+@@ -740,12 +740,12 @@
+ 
+   if (pages)
+     {
+-      for (i=0; i<n_pages; i++)
+-	if (!strcmp(pages[i]->name, expr)) /* redirect on page name match */
+-	  wiki_redirect(res, pages[i]->name);
+-
+       wiki_show_header(res, "Search", FALSE);
+ 
++      /* if only one page is found, redirect to it */
++      if (n_pages == 1)
++        wiki_redirect(res, pages[0]->name);
++
+       for (i=0; i<n_pages; i++)
+ 	{
+ 	  http_response_printf(res, "<a href='%s'>%s</a><br />\n", 

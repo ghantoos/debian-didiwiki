@@ -6,3 +6,4 @@
 60_bind_address.dpatch
 70_usage.dpatch
 80_sigint_sigterm.dpatch
+90_search_engine.dpatch
