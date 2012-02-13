@@ -36,7 +36,8 @@ case "$1" in
   if check_enable_daemon_option; then
 	echo -n "Starting $DESC: "
 	start-stop-daemon --start -b -m -c didiwiki --quiet --pidfile \
-	    /var/run/$NAME.pid --exec $DAEMON -- --home=/var/lib/didiwiki
+	    /var/run/$NAME.pid --exec $DAEMON -- --home=/var/lib/didiwiki \
+        --listen=$LISTEN
 	echo "$NAME."
   else
       RET=1
@@ -61,7 +62,7 @@ case "$1" in
 	if check_enable_daemon_option; then
 	    start-stop-daemon --start -b -m -c didiwiki --quiet --pidfile \
 		/var/run/$NAME.pid --exec $DAEMON -- \
-		--home=/var/lib/didiwiki
+		--home=/var/lib/didiwiki --listen=127.0.0.1
 	    echo "$NAME."
 	else
 	    RET=1

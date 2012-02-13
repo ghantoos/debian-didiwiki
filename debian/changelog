@@ -1,3 +1,14 @@
+didiwiki (0.5-10) unstable; urgency=low
+
+  * debian/didiwiki.init:
+    - The daemon now listens by default on localhost.
+      Thank you José Sebrosa <sebrosa@artenumerica.com> for the patch.
+      (Closes: #601489)
+  * debian/didiwiki.default:
+    - Added the LISTEN variable to listen by default on localhost.
+
+ -- Ignace Mouzannar <mouzannar@gmail.com>  Thu, 24 Nov 2011 02:10:12 +0400
+
 didiwiki (0.5-9) unstable; urgency=low
 
   * Added debian/README.source pointing to the dpatch documentation.
