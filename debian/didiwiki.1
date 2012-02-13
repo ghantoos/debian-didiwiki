@@ -6,19 +6,6 @@ didiwiki \- simple wiki implementation with built-in webserver
 .SH SYNOPSIS
 .B didiwiki
 .RI [ options ]
-.SH OPTIONS
-.TP
-\fB\-h\fR \fIdirectory\fR, \fB\--home\fR=\fIdirectory\fR
-By default
-.B didiwiki
-stores its pages in \fI~/.didiwiki\fR. You can override this by
-specifying an alternative directory.
-.TP
-\fB\-p\fR \fIport\fR, \fB\--port\fR=\fIport\fR
-By default
-.B didiwiki
-will listen on port \fI8000\fR. You can override this by specifying an
-alternative port.
 .SH DESCRIPTION
 .B didiwiki
 is aimed at those who need a quick and lightweight wiki for personal
@@ -32,8 +19,58 @@ language, or database.
 The appearance of the wiki pages may be altered by placing a
 styles.css in \fI~/.didiwiki\fR or in the directory specified using
 the \fB--home\fR option.
+.SH OPTIONS
+.TP
+\fB\-d\fR, \fB\--debug\fR
+Start in debug mode. In this case,
+.B didiwiki
+will not bind to any IP address or port: it will only read the requests from standard input (stdin)
+.TP
+\fB\-h\fR \fIdirectory\fR, \fB\--home\fR=\fIdirectory\fR
+By default
+.B didiwiki
+stores its pages in \fI~/.didiwiki\fR. You can override this by
+specifying an alternative directory
+.TP
+\fB\-l\fR \fIipaddr\fR, \fB\--listen\fR=\fIipaddr\fR
+By default
+.B didiwiki
+binds to "0.0.0.0". You can override this by specifying an alternative IP address
+.TP
+\fB\-p\fR \fIport\fR, \fB\--port\fR=\fIport\fR
+By default
+.B didiwiki
+will listen on port \fI8000\fR. You can override this by specifying an
+alternative port
+.TP
+\fB\--help\fR
+Display the help message
+
+.SH EXAMPLES
+.TP
+\fBdidiwiki\fR uses syslog to log when it is launched or stopped, and when a page is accessed or modified. Here is an example configuration of rsyslog:
+.RS
+.ft 3
+.nf
+.sp
+$ cat /etc/rsyslog.d/didiwiki.conf
+local0.*    /var/log/didiwiki.log
+.ft
+.LP
+.RE
+.fi
+
+In order to launch \fBdidiwiki\fR on a specific IP and port:
+.RS
+.ft 3
+.nf
+.sp 
+$ didiwiki \-l 127.0.0.1 \-p 8080
+.ft
+.LP
+.RE
+.fi
 
 .SH AUTHOR
 .B didiwiki
 was written by Matthew Allum <mallum@o-hand.com>.
-

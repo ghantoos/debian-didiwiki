@@ -1,7 +1,7 @@
 Source: didiwiki
 Section: web
 Priority: optional
-Maintainer: Debian QA Group <packages@qa.debian.org>
+Maintainer: Ignace Mouzannar <mouzannar@gmail.com>
 Build-Depends: debhelper (>= 7), cdbs, dpatch
 Standards-Version: 3.8.2
 

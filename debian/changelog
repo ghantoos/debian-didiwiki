@@ -1,3 +1,22 @@
+didiwiki (0.5-8) unstable; urgency=low
+
+  * New maintainer (Closes: #531177)
+  * Added access log support using syslog. 
+    Patch provided by Carlo Mandelli <camandel@gmail.com> (Closes: #486285)
+  * Added the possibility to bind to an IP address other than the default
+    "0.0.0.0" using the -l or --listen flags.
+    Patch based on initial work provided by Carlo Mandelli <camandel@gmail.com>
+   (Closes: #536787)
+  * Completed the usage() function to print a user friendly help message
+  * Added the --help flag that displays the usage() message
+  * Added SIGINT and SIGTERM handlers in order to stop didiwiki cleanly and
+    log the events
+  * Updated the man page including the new features listed above
+  * Corrected a compilation warning: "pointer targets in passing argument 
+    3 of ‘...’ differ in signedness" (http.c:228 and http.c:510)
+
+ -- Ignace Mouzannar <mouzannar@gmail.com>  Mon, 20 Jul 2009 19:19:25 +0200
+
 didiwiki (0.5-7) unstable; urgency=low
 
   * QA upload.

@@ -1,0 +1,78 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 80_sigint.dpatch by Ignace Mouzannar <mouzannar@gmail.com>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Implementation of a SIGINT handler in order to stop didiwiki cleanly
+
+@DPATCH@
+diff -urNad didiwiki-0.5~/src/http.c didiwiki-0.5/src/http.c
+--- didiwiki-0.5~/src/http.c	2009-07-24 17:19:53.000000000 +0200
++++ didiwiki-0.5/src/http.c	2009-07-24 17:20:29.000000000 +0200
+@@ -442,6 +442,40 @@
+ }
+ 
+ /*
++** SIGINT handler.
++*/
++
++void  
++sigint(int sig)
++{
++  printf("\nDidiwiki stopped.\n");
++  syslog(LOG_LOCAL0|LOG_INFO, "Didiwiki stopped.\n");
++
++  (void)signal(SIGINT, SIG_DFL);
++  (void)kill(getpid(), SIGINT);
++
++  /* NOTREACHED */
++  exit(1);
++}
++
++/*
++** SIGTERM handler
++*/
++void
++sigterm(int sig)
++{
++  printf("\nDidiwiki stopped.\n");
++  syslog(LOG_LOCAL0|LOG_INFO, "Didiwiki stopped.\n");
++
++  (void)signal(SIGTERM, SIG_DFL);
++  (void)kill(getpid(), SIGTERM);
++
++  /* NOTREACHED */
++  exit(1);
++
++}
++
++/*
+ ** Maximum number of child processes that we can have running
+ ** at one time before we start slowing things down.
+ */
+@@ -463,6 +497,12 @@
+   struct sockaddr_in inaddr;        /* The socket address */
+   int                reuse = 1;
+ 
++  /* catch SIGINT */
++  (void) signal(SIGINT, sigint);
++
++  /* catch SIGTERM */
++  (void) signal(SIGTERM, sigterm);
++
+   memset(&inaddr, 0, sizeof(inaddr));
+   inaddr.sin_family = AF_INET;
+   inaddr.sin_addr.s_addr = address.s_addr;
+diff -urNad didiwiki-0.5~/src/http.h didiwiki-0.5/src/http.h
+--- didiwiki-0.5~/src/http.h	2009-07-24 17:19:53.000000000 +0200
++++ didiwiki-0.5/src/http.h	2009-07-24 17:20:53.000000000 +0200
+@@ -55,5 +55,10 @@
+ void
+ http_response_send(HttpResponse *res);
+ 
++void
++sigint(int sig);
++
++void
++sigterm(int sig);
+ 
+ #endif

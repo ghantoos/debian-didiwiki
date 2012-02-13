@@ -1,0 +1,136 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 60_bind_address.dpatch by Carlo Mandelli <camandel@gmail.com> and Ignace Mouzannar <mouzannar@gmail.com>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Implementation of the -l|--listen option that lets you bind to a 
+## DP: address other than the default "0.0.0.0"
+
+@DPATCH@
+diff -urNad didiwiki-0.5~/src/didi.c didiwiki-0.5/src/didi.c
+--- didiwiki-0.5~/src/didi.c	2009-07-23 14:33:33.000000000 +0200
++++ didiwiki-0.5/src/didi.c	2009-07-23 14:33:33.000000000 +0200
+@@ -11,27 +11,33 @@
+ int 
+ main(int argc, char **argv)
+ {
+-  HttpRequest  *req  = NULL;
+-  int           port = 8000;
+-  int           c;
+-  char          *didiwiki_home = NULL;
++  HttpRequest    *req  = NULL;
++  int             port = 8000;
++  int             c;
++  char           *didiwiki_home = NULL;
++  struct in_addr address;
++
+ 
+   debug = 0;
+ 
++  /* by default bind server to "0.0.0.0" */
++  address.s_addr = inet_addr("0.0.0.0");
++
+   while (1)
+     {
+       static struct option long_options[] = 
+ 	{
+-	  {"debug", no_argument,       0, 'd'},
+-	  {"port",  required_argument, 0, 'p'},
+-	  {"home",  required_argument, 0, 'h'},
++	  {"debug",  no_argument,       0, 'd'},
++      {"listen", required_argument, 0, 'l'},
++	  {"port",   required_argument, 0, 'p'},
++	  {"home",   required_argument, 0, 'h'},
+ 	  {0, 0, 0, 0}
+ 	};
+ 
+       /* getopt_long stores the option index here */
+       int option_index = 0;
+       
+-      c = getopt_long (argc, argv, "dp:h:", long_options, &option_index);
++      c = getopt_long (argc, argv, "dl:p:h:", long_options, &option_index);
+ 
+       /* detect the end of the options */
+       if (c == -1)
+@@ -54,6 +60,14 @@
+ 	  didiwiki_home = optarg;
+ 	  break;
+ 
++    case 'l':
++      if(inet_aton(optarg,&address) == 0) {
++        fprintf(stderr, "didiwiki: invalid ip address \"%s\"\n", optarg);
++        exit(1);
++      } else
++        address.s_addr = inet_addr(optarg);
++      break;
++      
+ 	default:
+ 	  abort ();
+ 	}
+@@ -66,7 +80,7 @@
+       req = http_request_new(); 	/* reads request from stdin */
+     }
+   else {
+-    req = http_server(port);    /* forks here */
++    req = http_server(address, port);    /* forks here */
+   }
+ 
+   wiki_handle_http_request(req);
+diff -urNad didiwiki-0.5~/src/http.c didiwiki-0.5/src/http.c
+--- didiwiki-0.5~/src/http.c	2009-07-23 14:33:33.000000000 +0200
++++ didiwiki-0.5/src/http.c	2009-07-23 14:34:19.000000000 +0200
+@@ -451,7 +451,7 @@
+ ** Implement an HTTP server daemon.
+ */
+ HttpRequest*
+-http_server(int iPort)
++http_server(struct in_addr address, int iPort)
+ {
+   int                listener;      /* The server socket */
+   int                connection;    /* A socket for each connection */
+@@ -465,7 +465,7 @@
+ 
+   memset(&inaddr, 0, sizeof(inaddr));
+   inaddr.sin_family = AF_INET;
+-  inaddr.sin_addr.s_addr = INADDR_ANY;
++  inaddr.sin_addr.s_addr = address.s_addr;
+   inaddr.sin_port = htons(iPort);
+   listener = socket(AF_INET, SOCK_STREAM, 0);
+ 
+@@ -481,21 +481,21 @@
+   setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)); 
+ #endif
+ 
+-  fprintf(stderr,"Attempting to use port %d .. ", iPort);
+-  
++  fprintf(stderr,"Attempting to bind to %s:%i .. ", inet_ntoa(address), iPort);
++ 
+   inaddr.sin_port = htons(iPort);
+   
+   if( bind(listener, (struct sockaddr*)&inaddr, sizeof(inaddr)) < 0 )
+     {
+       fprintf(stderr,"Failed! \n");
+ 
+-      fprintf(stderr,"Can't bind to port. You can specify an alternative port using the -p option.\n");
++      fprintf(stderr,"Can't bind to IP and/or port.\n");
+       exit(1);
+     }
+   
+   fprintf(stderr,"Success! \n");
+   
+-  fprintf(stderr,"DidiWiki Started. Please point your browser at http://localhost:%i\n", iPort);
++  fprintf(stderr,"DidiWiki Started.\n");
+ 
+   /* log starting information */
+   openlog("didiwiki", 0, 0);
+diff -urNad didiwiki-0.5~/src/http.h didiwiki-0.5/src/http.h
+--- didiwiki-0.5~/src/http.h	2009-07-23 14:33:33.000000000 +0200
++++ didiwiki-0.5/src/http.h	2009-07-23 14:33:33.000000000 +0200
+@@ -6,7 +6,7 @@
+ typedef struct HttpRequestParam HttpRequestParam;
+ 
+ HttpRequest*
+-http_server(int iPort);
++http_server(struct in_addr address, int iPort);
+ 
+ HttpRequest*
+ http_request_new(void);

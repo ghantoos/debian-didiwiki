@@ -1,0 +1,119 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 50_accesslog.dpatch by Carlo Mandelli <camandel@gmail.com>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Adds access log to didiwiki using syslog
+
+@DPATCH@
+diff -urNad didiwiki-0.5~/src/didi.h didiwiki-0.5/src/didi.h
+--- didiwiki-0.5~/src/didi.h	2009-07-23 14:34:34.000000000 +0200
++++ didiwiki-0.5/src/didi.h	2009-07-23 14:34:34.000000000 +0200
+@@ -76,6 +76,7 @@
+ #include <sys/stat.h>
+ #include <dirent.h>
+ #include <getopt.h>
++#include <syslog.h>
+ 
+ #endif
+ 
+diff -urNad didiwiki-0.5~/src/http.c didiwiki-0.5/src/http.c
+--- didiwiki-0.5~/src/http.c	2009-07-23 14:34:34.000000000 +0200
++++ didiwiki-0.5/src/http.c	2009-07-23 14:35:15.000000000 +0200
+@@ -30,6 +30,7 @@
+   char             *uri;
+   char             *path_info;
+   char             *query_string;
++  char             *ip_src;
+ };
+ 
+ struct HttpResponse 
+@@ -170,6 +171,11 @@
+   return req->query_string;
+ }
+ 
++char*
++http_request_get_ip_src(HttpRequest *req)
++{
++  return req->ip_src;
++}
+ 
+ /*
+  * This routine handles a single HTTP request which is coming in on
+@@ -182,7 +188,7 @@
+   char              *token, *content_type, *post_data, *z;
+   int                i, len;
+   struct sockaddr_in remoteName;
+-  int                size = sizeof(struct sockaddr_in);
++  socklen_t          size = sizeof(struct sockaddr_in);
+   char               request_line[2048];     /* A single line of input. */
+   HttpRequest       *req = NULL;
+ 
+@@ -225,8 +231,10 @@
+   if (&token[i])
+     req->query_string = strdup(&token[i]);
+ 
+-  if( getpeername(fileno(stdin), (struct sockaddr*)&remoteName, &size) >=0 )
++  if( getpeername(fileno(stdin), (struct sockaddr*)&remoteName, &size) >=0 ) {
+     putenv(util_mprintf("REMOTE_ADDR=%s", inet_ntoa(remoteName.sin_addr)));
++    req->ip_src = inet_ntoa(remoteName.sin_addr);
++  }
+ 
+   /* Get all the optional fields that follow the first line.
+   */
+@@ -448,7 +456,7 @@
+   int                listener;      /* The server socket */
+   int                connection;    /* A socket for each connection */
+   fd_set             readfds;       /* Set of file descriptors for select() */
+-  int                lenaddr;       /* Length of the inaddr structure */
++  socklen_t          lenaddr;       /* Length of the inaddr structure */
+   int                child;         /* PID of the child process */
+   int                nchildren = 0; /* Number of child processes */
+   struct timeval     delay;         /* How long to wait inside select() */
+@@ -488,6 +496,10 @@
+   fprintf(stderr,"Success! \n");
+   
+   fprintf(stderr,"DidiWiki Started. Please point your browser at http://localhost:%i\n", iPort);
++
++  /* log starting information */
++  openlog("didiwiki", 0, 0);
++  syslog(LOG_LOCAL0|LOG_INFO, "started with PID %d", getpid());
+   
+   listen(listener,10);
+   
+diff -urNad didiwiki-0.5~/src/http.h didiwiki-0.5/src/http.h
+--- didiwiki-0.5~/src/http.h	2009-07-23 14:26:34.000000000 +0200
++++ didiwiki-0.5/src/http.h	2009-07-23 14:34:34.000000000 +0200
+@@ -23,6 +23,8 @@
+ char*
+ http_request_get_query_string(HttpRequest *req);
+ 
++char*
++http_request_get_ip_src(HttpRequest *req);
+ 
+ HttpResponse*
+ http_response_new(HttpRequest *req);
+diff -urNad didiwiki-0.5~/src/wiki.c didiwiki-0.5/src/wiki.c
+--- didiwiki-0.5~/src/wiki.c	2009-07-23 14:34:34.000000000 +0200
++++ didiwiki-0.5/src/wiki.c	2009-07-23 14:34:34.000000000 +0200
+@@ -1001,13 +1001,19 @@
+       /* TODO: dont blindly write wikitext data to disk */
+       if ( (wikitext = http_request_param_get(req, "wikitext")) != NULL)
+ 	{
+-	  file_write(page, wikitext);	      
++	  file_write(page, wikitext);
++
++      /* log modified page name and IP address */
++      syslog(LOG_LOCAL0|LOG_INFO, "page %s modified from %s", page ,http_request_get_ip_src(req));
+ 	}
+ 
+       if (access(page, R_OK) == 0) 	/* page exists */
+ 	{
+ 	  wikitext = file_read(page);
+-	  
++
++	  /* log read page name and IP address */
++      syslog(LOG_LOCAL0|LOG_INFO, "page %s viewed from %s", page, http_request_get_ip_src(req));
++
+ 	  if (!strcmp(command, "edit"))
+ 	    {
+ 	      /* print edit page */

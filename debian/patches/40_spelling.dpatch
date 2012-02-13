@@ -6,8 +6,8 @@
 
 @DPATCH@
 diff -urNad didiwiki-0.5~/README didiwiki-0.5/README
---- didiwiki-0.5~/README	2009-06-23 14:33:04.000000000 +0200
-+++ didiwiki-0.5/README	2009-06-29 01:38:09.000000000 +0200
+--- didiwiki-0.5~/README	2004-09-28 14:35:39.000000000 +0200
++++ didiwiki-0.5/README	2009-07-20 20:37:58.000000000 +0200
 @@ -45,7 +45,7 @@
  
  http://didiwiki/api/pages
@@ -18,8 +18,8 @@ diff -urNad didiwiki-0.5~/README didiwiki-0.5/README
   first.
  
 diff -urNad didiwiki-0.5~/src/wikitext.h didiwiki-0.5/src/wikitext.h
---- didiwiki-0.5~/src/wikitext.h	2009-06-29 01:38:08.000000000 +0200
-+++ didiwiki-0.5/src/wikitext.h	2009-06-29 01:38:09.000000000 +0200
+--- didiwiki-0.5~/src/wikitext.h	2009-07-20 20:37:57.000000000 +0200
++++ didiwiki-0.5/src/wikitext.h	2009-07-20 20:37:58.000000000 +0200
 @@ -108,7 +108,7 @@
  " ---- Horizonal line\n"                                                 \
  "----\n"                                                                 \
