@@ -1,10 +1,6 @@
-#! /bin/sh /usr/share/dpatch/dpatch-run
-## 70_usage.dpatch by Ignace Mouzannar <mouzannar@gmail.com>
-##
-## All lines beginning with `## DP:' are a description of the patch.
-## DP: Usage() function implementation
+From: Ignace Mouzannar <mouzannar@gmail.com>
+Subject: Usage() function implementation
 
-@DPATCH@
 diff -urNad didiwiki-0.5~/src/didi.c didiwiki-0.5/src/didi.c
 --- didiwiki-0.5~/src/didi.c	2009-07-23 17:38:44.000000000 +0200
 +++ didiwiki-0.5/src/didi.c	2009-07-23 17:39:32.000000000 +0200

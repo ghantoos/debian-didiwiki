@@ -1,10 +1,6 @@
-#! /bin/sh /usr/share/dpatch/dpatch-run
-## 50_accesslog.dpatch by Carlo Mandelli <camandel@gmail.com>
-##
-## All lines beginning with `## DP:' are a description of the patch.
-## DP: Adds access log to didiwiki using syslog
+From: Carlo Mandelli <camandel@gmail.com>
+Subject: Adds access log to didiwiki using syslog
 
-@DPATCH@
 diff -urNad didiwiki-0.5~/src/didi.h didiwiki-0.5/src/didi.h
 --- didiwiki-0.5~/src/didi.h	2009-07-23 14:34:34.000000000 +0200
 +++ didiwiki-0.5/src/didi.h	2009-07-23 14:34:34.000000000 +0200

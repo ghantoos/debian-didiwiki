@@ -1,15 +1,9 @@
-#! /bin/sh /usr/share/dpatch/dpatch-run
-## 90_search_engine.dpatch by Carlo Mandelli <camandel@gmail.com> and
-## Ignace Mouzannar <mouzannar@gmail.com>
-##
-## All lines beginning with `## DP:' are a description of the patch.
-## DP: - Make search case insensitive
-## DP: - Removes redirection to page when search terms are identical to 
-## DP;   a page name
-## DP: - If the search returns only one page, then it redirects the user there
-## DP: - This patch closes #536484
+From: Carlo Mandelli <camandel@gmail.com> and
+Subject: - Make search case insensitive
+- Removes redirection to page when search terms are identical to 
+- If the search returns only one page, then it redirects the user there
+- This patch closes #536484
 
-@DPATCH@
 diff -urNad didiwiki-0.5~/src/wiki.c didiwiki-0.5/src/wiki.c
 --- didiwiki-0.5~/src/wiki.c	2009-10-06 22:47:59.000000000 +0200
 +++ didiwiki-0.5/src/wiki.c	2009-10-06 22:49:07.000000000 +0200

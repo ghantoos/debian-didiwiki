@@ -6,14 +6,19 @@
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: start, restart and stop Didiwiki's daemon
+# Description: This script starts/stops the lightweight wiki
+#              didiwiki daemon.
 ### END INIT INFO
 
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 DAEMON=/usr/bin/didiwiki
 NAME=didiwiki
 DESC=didiwiki
+PIDFILE=/var/run/$NAME.pid
 
 test -x $DAEMON || exit 0
+
+. /lib/lsb/init-functions
 
 # Include didiwiki defaults if available
 if [ -f /etc/default/didiwiki ] ; then
@@ -36,7 +41,7 @@ case "$1" in
   if check_enable_daemon_option; then
 	echo -n "Starting $DESC: "
 	start-stop-daemon --start -b -m -c didiwiki --quiet --pidfile \
-	    /var/run/$NAME.pid --exec $DAEMON -- --home=/var/lib/didiwiki \
+	    $PIDFILE --exec $DAEMON -- --home=/var/lib/didiwiki \
         --listen=$LISTEN
 	echo "$NAME."
   else
@@ -45,7 +50,7 @@ case "$1" in
 	;;
   stop)
 	echo -n "Stopping $DESC: "
-	start-stop-daemon --stop --quiet -m -o --pidfile /var/run/$NAME.pid \
+	start-stop-daemon --stop --quiet -m -o --pidfile $PIDFILE \
 		--exec $DAEMON
 	echo "$NAME."
 	;;
@@ -57,21 +62,24 @@ case "$1" in
 	#
 	echo -n "Restarting $DESC: "
 	start-stop-daemon --stop -m -o --quiet --pidfile \
-		/var/run/$NAME.pid --exec $DAEMON
+		$PIDFILE --exec $DAEMON
 	sleep 1
 	if check_enable_daemon_option; then
 	    start-stop-daemon --start -b -m -c didiwiki --quiet --pidfile \
-		/var/run/$NAME.pid --exec $DAEMON -- \
+		$PIDFILE --exec $DAEMON -- \
 		--home=/var/lib/didiwiki --listen=127.0.0.1
 	    echo "$NAME."
 	else
 	    RET=1
 	fi
 	;;
+  status)
+    status_of_proc -p $PIDFILE $DAEMON $NAME && exit 0 || exit $?
+    ;;
   *)
 	N=/etc/init.d/$NAME
 	# echo "Usage: $N {start|stop|restart|reload|force-reload}" >&2
-	echo "Usage: $N {start|stop|restart|force-reload}" >&2
+	echo "Usage: $N {start|stop|restart|force-reload|status}" >&2
 	exit 1
 	;;
 esac

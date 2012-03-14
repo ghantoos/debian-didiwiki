@@ -2,8 +2,8 @@ Source: didiwiki
 Section: web
 Priority: optional
 Maintainer: Ignace Mouzannar <mouzannar@gmail.com>
-Build-Depends: debhelper (>= 7), cdbs, dpatch
-Standards-Version: 3.8.3
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.3
 
 Package: didiwiki
 Architecture: any

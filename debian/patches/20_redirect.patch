@@ -1,10 +1,6 @@
-#! /bin/sh /usr/share/dpatch/dpatch-run
-## 10_redirect.dpatch by Alexey Khudyakov <alexey.skladnoy@gmail.com>
-##
-## All lines beginning with `## DP:' are a description of the patch.
-## DP: Fixes unicode chars on page names
+From: Alexey Khudyakov <alexey.skladnoy@gmail.com>
+Subject: Fixes unicode chars on page names
 
-@DPATCH@
 
 diff -Naur didiwiki-0.5-deb/src/util.c didiwiki-0.5-patch/src/util.c
 --- didiwiki-0.5-deb/src/util.c	2007-04-21 15:56:13.000000000 +0400

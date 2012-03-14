@@ -1,11 +1,7 @@
-#! /bin/sh /usr/share/dpatch/dpatch-run
-## 60_bind_address.dpatch by Carlo Mandelli <camandel@gmail.com> and Ignace Mouzannar <mouzannar@gmail.com>
-##
-## All lines beginning with `## DP:' are a description of the patch.
-## DP: Implementation of the -l|--listen option that lets you bind to a 
-## DP: address other than the default "0.0.0.0"
+From: Carlo Mandelli <camandel@gmail.com> and Ignace Mouzannar <mouzannar@gmail.com>
+Subject: Implementation of the -l|--listen option that lets you bind to a
+ address other than the default "0.0.0.0"
 
-@DPATCH@
 diff -urNad didiwiki-0.5~/src/didi.c didiwiki-0.5/src/didi.c
 --- didiwiki-0.5~/src/didi.c	2009-07-23 14:33:33.000000000 +0200
 +++ didiwiki-0.5/src/didi.c	2009-07-23 14:33:33.000000000 +0200
