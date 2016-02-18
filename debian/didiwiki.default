@@ -11,3 +11,6 @@ ENABLE_DAEMON=yes
 
 # set ip address on which the daemon will listen
 LISTEN=127.0.0.1
+
+# set default didiwiki home directory
+HOME=/var/lib/didiwiki

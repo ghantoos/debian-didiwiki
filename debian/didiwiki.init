@@ -15,6 +15,7 @@ DAEMON=/usr/bin/didiwiki
 NAME=didiwiki
 DESC=didiwiki
 PIDFILE=/var/run/$NAME.pid
+HOME=/var/lib/didiwiki
 
 test -x $DAEMON || exit 0
 
@@ -41,7 +42,7 @@ case "$1" in
   if check_enable_daemon_option; then
 	echo -n "Starting $DESC: "
 	start-stop-daemon --start -b -m -c didiwiki --quiet --pidfile \
-	    $PIDFILE --exec $DAEMON -- --home=/var/lib/didiwiki \
+	    $PIDFILE --exec $DAEMON -- --home=$HOME \
         --listen=$LISTEN
 	echo "$NAME."
   else
@@ -67,7 +68,7 @@ case "$1" in
 	if check_enable_daemon_option; then
 	    start-stop-daemon --start -b -m -c didiwiki --quiet --pidfile \
 		$PIDFILE --exec $DAEMON -- \
-		--home=/var/lib/didiwiki --listen=127.0.0.1
+		--home=$HOME --listen=$LISTEN
 	    echo "$NAME."
 	else
 	    RET=1

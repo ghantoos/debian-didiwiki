@@ -1,3 +1,16 @@
+didiwiki (0.5-11) unstable; urgency=low
+
+  * debian/didiwiki.preinst:
+    - Added new file to force the stop of didiwiki before an upgrade. 
+      (Closes: 677008)
+  * debian/didiwiki.default:
+    - Added the $HOME variable.
+  * debian/didiwiki.init:
+    - Corrected the --listen flag when restarting the service. (Closes: #677007)
+    - Corrected the --home flag.
+
+ -- Ignace Mouzannar <mouzannar@gmail.com>  Fri, 29 Jun 2012 01:10:56 +0400
+
 didiwiki (0.5-10) unstable; urgency=low
 
   [ Ignace Mouzannar ]
@@ -14,10 +27,13 @@ didiwiki (0.5-10) unstable; urgency=low
     - Replaced CDBS with dh7 features.
   * debian/control:
     - Removed dependency on cdbs.
+    - Added DM-Upload-Allowed field.
   * debian/source/format:
     - New file set to '3.0 (quilt)'.
   * debian/didiwiki.docs:
     - Added AUTHORS file.
+  * debian/copyright:
+    - Removed second upstream URL.
 
   [ Jari Aalto ]
   * Remove deprecated dpatch and upgrade to packaging format "3.0 quilt".
@@ -25,12 +41,13 @@ didiwiki (0.5-10) unstable; urgency=low
     - Update to 9.
   * debian/control
     - Update to Standards-Version to 3.9.3 and debhelper to 9.
+  * debian/rules:
+    - Added hardening flags.
   * debian/patches
     - Remove deprecated dpatch and upgrade to packaging format "3.0 quilt".
-    - Add patch 92 to pass build with fix hardened build flags.
-      http://wiki.debian.org/ReleaseGoals/SecurityHardeningBuildFlags
+      (Closes: #668005)
 
- -- Ignace Mouzannar <mouzannar@gmail.com>  Wed, 14 Mar 2012 09:55:53 +0400
+ -- Ignace Mouzannar <mouzannar@gmail.com>  Sun, 08 Apr 2012 19:18:40 +0400
 
 didiwiki (0.5-9) unstable; urgency=low
 
