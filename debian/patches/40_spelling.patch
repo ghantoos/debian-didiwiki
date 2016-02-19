@@ -2,10 +2,11 @@ From: Ignace Mouzannar <mouzannar@gmail.com>
 Subject: Corrects spelling errors (seperated -> separated) in README file
  Corrects minor typo in src/wiki.c
 
-diff -urNad didiwiki-0.5~/README didiwiki-0.5/README
---- didiwiki-0.5~/README	2009-10-06 23:12:56.000000000 +0200
-+++ didiwiki-0.5/README	2009-10-06 23:14:06.000000000 +0200
-@@ -45,7 +45,7 @@
+Index: didiwiki-0.5/README
+===================================================================
+--- didiwiki-0.5.orig/README
++++ didiwiki-0.5/README
+@@ -45,7 +45,7 @@ http://didiwiki/api/page/delete?page=XXX
  
  http://didiwiki/api/pages
  
@@ -14,10 +15,11 @@ diff -urNad didiwiki-0.5~/README didiwiki-0.5/README
   title,TAB,modified date) of wiki pages with the most recently modified
   first.
  
-diff -urNad didiwiki-0.5~/src/wiki.c didiwiki-0.5/src/wiki.c
---- didiwiki-0.5~/src/wiki.c	2009-10-06 23:14:06.000000000 +0200
-+++ didiwiki-0.5/src/wiki.c	2009-10-06 23:15:58.000000000 +0200
-@@ -730,7 +730,7 @@
+Index: didiwiki-0.5/src/wiki.c
+===================================================================
+--- didiwiki-0.5.orig/src/wiki.c
++++ didiwiki-0.5/src/wiki.c
+@@ -730,7 +730,7 @@ wiki_show_search_results_page(HttpRespon
    if (expr == NULL || strlen(expr) == 0)
      {
        wiki_show_header(res, "Search", FALSE);
@@ -26,9 +28,19 @@ diff -urNad didiwiki-0.5~/src/wiki.c didiwiki-0.5/src/wiki.c
        wiki_show_footer(res);
        http_response_send(res);
        exit(0);
-diff -urNad didiwiki-0.5~/src/wikitext.h didiwiki-0.5/src/wikitext.h
---- didiwiki-0.5~/src/wikitext.h	2009-10-06 23:14:06.000000000 +0200
-+++ didiwiki-0.5/src/wikitext.h	2009-10-06 23:14:06.000000000 +0200
+Index: didiwiki-0.5/src/wikitext.h
+===================================================================
+--- didiwiki-0.5.orig/src/wikitext.h
++++ didiwiki-0.5/src/wikitext.h
+@@ -74,7 +74,7 @@
+ "\n"                                                                        \
+ "To learn more about what a [http://www.c2.com/cgi/wiki?WikiWikiWeb WikiWikiWeb] is, read about [http://www.c2.com/cgi/wiki?WhyWikiWorks WhyWikiWorks] and the [http://www.c2.com/cgi/wiki?WikiNature WikiNature]. Also, consult the [http://www.c2.com/cgi/wiki?WikiWikiWebFaq WikiWikiWebFaq].\n"                      \
+ "\n"                                                                        \
+-"For an example of how a !DidiWiki entry looks in text form you can [?edit edit] this page. Also see WikiHelp for infomation on usage and formatting rules. Use The WikiSandbox to experiment.\n" \
++"For an example of how a !DidiWiki entry looks in text form you can [?edit edit] this page. Also see WikiHelp for information on usage and formatting rules. Use The WikiSandbox to experiment.\n" \
+ "\n"                                                                        \
+ "/!DidiWiki / is written by [mailto://mallum@o-hand.com Matthew Allum] in C and is free software, released under the [http://www.gnu.org GNU] [http://www.gnu.org/copyleft/gpl.html GPL]. It uses a formatting style similar to that of [http://www.kwiki.org kwiki] and some webserver code from [http://www.cvstrac.org cvstrac].\n"
+ 
 @@ -108,7 +108,7 @@
  " ---- Horizonal line\n"                                                 \
  "----\n"                                                                 \

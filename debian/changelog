@@ -1,3 +1,19 @@
+didiwiki (0.5-12) unstable; urgency=medium
+
+  * debian/patches:
+    - 91_check_page_path.patch: new patch that correct a major security issue
+      allowing didiwiki to display any file on the filesystem. Thank you
+      Alexander Izmailov <yarolig@gmail.com> for providing this patch!
+      (Closes: #815111)
+    - 40_spelling.patch: corrected spelling mistakes.
+  * debian/control:
+    - Removed deprecated field Dm-Upload-Allowed.
+    - Bumped standards-version to 3.9.6.
+  * debian/copyright:
+    - Corrected minor typo.
+
+ -- Ignace Mouzannar <mouzannar@gmail.com>  Thu, 18 Feb 2016 18:29:40 -0500
+
 didiwiki (0.5-11) unstable; urgency=low
 
   * debian/didiwiki.preinst:
