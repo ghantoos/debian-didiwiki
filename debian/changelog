@@ -1,3 +1,16 @@
+didiwiki (0.5-13) unstable; urgency=medium
+
+  * debian/patches:
+    - 91_check_page_path.patch: updated patch to correct restrictive behavior,
+      rendering pages beginning with non alpha-numeric UTF-8 characters, such
+      as "à", inaccessible.
+      Thank you Sergio Gelato <Sergio.Gelato@astro.su.se> for your report and
+      help! (Closes: #818708)
+  * debian/control:
+    - Bumped standards-version to 3.9.7.
+
+ -- Ignace Mouzannar <mouzannar@gmail.com>  Sun, 10 Apr 2016 12:21:29 -0400
+
 didiwiki (0.5-12) unstable; urgency=medium
 
   * debian/patches:

@@ -1,11 +1,14 @@
 From: Alexander Izmailov <yarolig@gmail.com>
 Subject: Correct a major security issue allowing didiwiki to 
          display any file on the filesystem
+Updated by: Ignace Mouzannar <mouzannar@gmail.com> with the help
+            Sergio Gelato <Sergio.Gelato@astro.su.se>. Thanks Sergio!
+Last-Updated: 03-April-2016
 Index: didiwiki-0.5/src/wiki.c
 ===================================================================
 --- didiwiki-0.5.orig/src/wiki.c
 +++ didiwiki-0.5/src/wiki.c
-@@ -812,6 +812,25 @@ wiki_show_footer(HttpResponse *res)
+@@ -812,6 +812,28 @@ wiki_show_footer(HttpResponse *res)
  		       );
  }
  
@@ -19,10 +22,13 @@ Index: didiwiki-0.5/src/wiki.c
 +    if (!page_name)
 +        return FALSE;
 +
-+    if (!isalnum(page_name[0]))
++    if (page_name[0] == '/')
 +        return FALSE;
 +
-+    if (strstr(page_name, ".."))
++    if (strncmp(page_name, "../", 3) == 0)
++        return FALSE;
++
++    if (strstr(page_name, "/../"))
 +        return FALSE;
 +
 +    return TRUE;
@@ -31,7 +37,7 @@ Index: didiwiki-0.5/src/wiki.c
  void
  wiki_handle_rest_call(HttpRequest  *req, 
  		      HttpResponse *res,
-@@ -827,7 +846,7 @@ wiki_handle_rest_call(HttpRequest  *req,
+@@ -827,7 +849,7 @@ wiki_handle_rest_call(HttpRequest  *req,
  	  if (page == NULL)
  	    page = http_request_get_query_string(req);
  
@@ -40,7 +46,7 @@ Index: didiwiki-0.5/src/wiki.c
  	    {
  	      http_response_printf(res, "%s", file_read(page));
  	      http_response_send(res);
-@@ -840,11 +859,14 @@ wiki_handle_rest_call(HttpRequest  *req,
+@@ -840,11 +862,14 @@ wiki_handle_rest_call(HttpRequest  *req,
  	  if( ( (wikitext = http_request_param_get(req, "text")) != NULL)
  	      && ( (page = http_request_param_get(req, "page")) != NULL))
  	    {
@@ -56,7 +62,7 @@ Index: didiwiki-0.5/src/wiki.c
  	}
        else if (!strcmp(func, "page/delete"))
  	{
-@@ -853,7 +875,7 @@ wiki_handle_rest_call(HttpRequest  *req,
+@@ -853,7 +878,7 @@ wiki_handle_rest_call(HttpRequest  *req,
  	  if (page == NULL)
  	    page = http_request_get_query_string(req);
  
@@ -65,7 +71,7 @@ Index: didiwiki-0.5/src/wiki.c
  	    {
  	      http_response_printf(res, "success");
  	      http_response_send(res);
-@@ -867,7 +889,7 @@ wiki_handle_rest_call(HttpRequest  *req,
+@@ -867,7 +892,7 @@ wiki_handle_rest_call(HttpRequest  *req,
  	  if (page == NULL)
  	    page = http_request_get_query_string(req);
  
@@ -74,7 +80,7 @@ Index: didiwiki-0.5/src/wiki.c
  	    {
  	      http_response_printf(res, "success");
  	      http_response_send(res);
-@@ -966,7 +988,7 @@ wiki_handle_http_request(HttpRequest *re
+@@ -966,7 +991,7 @@ wiki_handle_http_request(HttpRequest *re
    /* A little safety. issue a malformed request for any paths,
     * There shouldn't need to be any..
     */
